@@ -79,7 +79,7 @@ public class Server {
             if (!userName.equals("")) {
                 connectionMap.remove(userName);
                 sendBroadcastMessage(new Message(MessageType.USER_REMOVED, userName));
-                ConsoleHelper.writeMessage("Cоединение с удаленным адресом закрыто!");
+                ConsoleHelper.writeMessage("Соединение с удаленным адресом закрыто!");
             }
 
         }
