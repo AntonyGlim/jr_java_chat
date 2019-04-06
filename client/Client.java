@@ -77,6 +77,44 @@ public class Client {
         }
     }
 
+    /**
+     * Должен создавать вспомогательный поток SocketThread,
+     * ожидать пока тот установит соединение с сервером, а после этого в цикле
+     * считывать сообщения с консоли и отправлять их серверу.
+     */
+    public void run(){
+        SocketThread socketThread = getSocketThread();
+        socketThread.setDaemon(true);
+        socketThread.start();
+
+        synchronized (this){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                ConsoleHelper.writeMessage("Возникла ошибка при ожидаии главного потока!");
+                return;
+            }
+        }
+
+        if (clientConnected){
+            ConsoleHelper.writeMessage("Соединение установлено. Для выхода наберите команду 'exit'.");
+            while (clientConnected){
+                String msg = ConsoleHelper.readString();
+                if (msg.equals("exit")) break;
+                if (shouldSendTextFromConsole()) {
+                    sendTextMessage(msg);
+                }
+            }
+        } else {
+            ConsoleHelper.writeMessage("Произошла ошибка во время работы клиента.");
+        }
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client();
+        client.run();
+    }
+
 
 
     /**
