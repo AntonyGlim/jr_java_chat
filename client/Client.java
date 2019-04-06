@@ -6,6 +6,7 @@ import com.javarush.task.task30.task3008.Message;
 import com.javarush.task.task30.task3008.MessageType;
 
 import java.io.IOException;
+import java.net.Socket;
 
 public class Client {
 
@@ -124,6 +125,20 @@ public class Client {
      * и читающий сообщения сервера.
      */
     public class SocketThread extends Thread{
+
+        @Override
+        public void run() {
+            String serverAddress = getServerAddress();
+            int serverPort = getServerPort();
+            try (Socket socket = new Socket(serverAddress, serverPort)){
+                Client.this.connection = new Connection(socket);
+                clientHandshake();
+                clientMainLoop();
+            } catch (IOException | ClassNotFoundException e) {
+                notifyConnectionStatusChanged(false);
+            }
+
+        }
 
         /**
          * Должен выводить текст message в консоль
