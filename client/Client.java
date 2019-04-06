@@ -117,6 +117,8 @@ public class Client {
 
 
 
+
+
     /**
      * Будет отвечать за поток, устанавливающий сокетное соединение
      * и читающий сообщения сервера.
@@ -157,6 +159,51 @@ public class Client {
             Client.this.clientConnected = clientConnected;
             synchronized (Client.this){
                 Client.this.notify();
+            }
+        }
+
+        /**
+         * Этот метод будет представлять клиента серверу.
+         * @throws IOException
+         * @throws ClassNotFoundException
+         */
+        protected void clientHandshake() throws IOException, ClassNotFoundException {
+            while (true){
+                Message msg = connection.receive();
+                if (msg.getType() == MessageType.NAME_REQUEST){
+                    String userName = getUserName();
+                    connection.send(new Message(MessageType.USER_NAME, userName));
+                    continue;
+                }
+                if (msg.getType() == MessageType.NAME_ACCEPTED){
+                    notifyConnectionStatusChanged(true);
+                    return;
+                }
+                throw new IOException("Unexpected MessageType");
+            }
+        }
+
+        /**
+         * Этот метод будет реализовывать главный цикл обработки сообщений сервера.
+         * @throws IOException
+         * @throws ClassNotFoundException
+         */
+        protected void clientMainLoop() throws IOException, ClassNotFoundException {
+            while (true) {
+                Message msg = connection.receive();
+                if (msg.getType() == MessageType.TEXT) {
+                    processIncomingMessage(msg.getData());
+                    continue;
+                }
+                if (msg.getType() == MessageType.USER_ADDED) {
+                    informAboutAddingNewUser(msg.getData());
+                    continue;
+                }
+                if (msg.getType() == MessageType.USER_REMOVED) {
+                    informAboutDeletingNewUser(msg.getData());
+                    continue;
+                }
+                throw new IOException("Unexpected MessageType");
             }
         }
 
