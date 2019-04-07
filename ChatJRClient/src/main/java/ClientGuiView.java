@@ -1,5 +1,3 @@
-package com.javarush.task.task30.task3008.client;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
