@@ -138,8 +138,10 @@ public class Server {
                 if (msg.getType() == (MessageType.TEXT)) {
                     String newMsg = userName + ": " + msg.getData();
                     sendBroadcastMessage(new Message(MessageType.TEXT, newMsg));
+                } else if (msg.getType() == (MessageType.FILE)){
+
                 } else {
-                    ConsoleHelper.writeMessage("Сообщение не является текстом!");
+                    ConsoleHelper.writeMessage("Сообщение не является текстом или файлом!");
                 }
             }
         }
