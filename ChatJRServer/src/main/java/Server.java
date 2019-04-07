@@ -28,9 +28,10 @@ public class Server {
     }
 
     public static void main(String[] args) throws IOException {
-        
+
+        ConsoleHelper.writeMessage("Установить порт для сервера...");
         try (ServerSocket serverSocket = new ServerSocket(ConsoleHelper.readInt());) {
-            ConsoleHelper.writeMessage("Сервер запущен");
+            ConsoleHelper.writeMessage("Сервер запущен! (порт  " + serverSocket.getLocalPort() + ")");
             while (true){
                 Socket socket = serverSocket.accept();
                 Thread thread = new Handler(socket);
@@ -40,6 +41,9 @@ public class Server {
             ConsoleHelper.writeMessage("Ошибка!");
         }
     }
+
+
+
 
     /**
      * Новый поток обработчик Handler, в котором будет происходить обмен
