@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -139,7 +140,7 @@ public class Server {
                     String newMsg = userName + ": " + msg.getData();
                     sendBroadcastMessage(new Message(MessageType.TEXT, newMsg));
                 } else if (msg.getType() == (MessageType.FILE)){
-
+                    File file = msg.getFile();
                 } else {
                     ConsoleHelper.writeMessage("Сообщение не является текстом или файлом!");
                 }
