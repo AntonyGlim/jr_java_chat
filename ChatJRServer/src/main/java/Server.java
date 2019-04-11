@@ -140,6 +140,7 @@ public class Server {
                     String newMsg = userName + ": " + msg.getData();
                     sendBroadcastMessage(new Message(MessageType.TEXT, newMsg));
                 } else if (msg.getType() == (MessageType.FILE)){
+                    ConsoleHelper.writeMessage("Попытка передать файл");
                     File file = msg.getFile();
                 } else {
                     ConsoleHelper.writeMessage("Сообщение не является текстом или файлом!");

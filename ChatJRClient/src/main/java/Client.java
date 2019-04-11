@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -66,7 +67,22 @@ public class Client {
         try {
             connection.send(new Message(MessageType.TEXT, text));
         } catch (IOException e) {
-            ConsoleHelper.writeMessage("Произошло исключение IOException");
+            ConsoleHelper.writeMessage("Произошло IOException при передаче сообщения");
+            clientConnected = false;
+        }
+    }
+
+    /**
+     * Создает новое сообщение с файлом, используя переданный файл
+     * и отправляет его серверу через соединение connection.
+     */
+    protected void sendFile(){
+        try {
+            ConsoleHelper.writeMessage("Введите путь к файлу и его имя");
+            File file = new File(ConsoleHelper.readString());
+            connection.send(new Message(MessageType.FILE, file));
+        } catch (IOException e) {
+            ConsoleHelper.writeMessage("Произошло IOException при передаче файла");
             clientConnected = false;
         }
     }
@@ -95,6 +111,10 @@ public class Client {
             while (clientConnected){
                 String msg = ConsoleHelper.readString();
                 if (msg.equals("exit")) break;
+                if (msg.startsWith("sf")){
+                    sendFile();
+                    continue;
+                }
                 if (shouldSendTextFromConsole()) {
                     sendTextMessage(msg);
                 }
