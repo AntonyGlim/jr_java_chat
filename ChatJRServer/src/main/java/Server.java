@@ -1,5 +1,4 @@
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -146,6 +145,29 @@ public class Server {
                     ConsoleHelper.writeMessage("Сообщение не является текстом или файлом!");
                 }
             }
+        }
+
+        /**
+         * Метод перепишет пришедший файл в папку на сервере
+         * @param msg
+         * @throws IOException
+         */
+        private void copyFilesSymbolWithBuffer(Message msg) throws IOException {
+            FileReader fileReader = new FileReader(msg.getFile());
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            FileWriter fileWriter = new FileWriter(msg.getFile().getName());
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            while (bufferedReader.ready()){
+                bufferedWriter.write((char) bufferedReader.read());
+            }
+
+            bufferedWriter.close();
+            fileWriter.close();
+
+            bufferedReader.close();
+            fileReader.close();
         }
 
     }
