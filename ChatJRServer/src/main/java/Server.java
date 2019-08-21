@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -28,9 +28,10 @@ public class Server {
     }
 
     public static void main(String[] args) throws IOException {
-        
+
+        ConsoleHelper.writeMessage("Установить порт для сервера...");
         try (ServerSocket serverSocket = new ServerSocket(ConsoleHelper.readInt());) {
-            ConsoleHelper.writeMessage("Сервер запущен");
+            ConsoleHelper.writeMessage("Сервер запущен! (порт  " + serverSocket.getLocalPort() + ")");
             while (true){
                 Socket socket = serverSocket.accept();
                 Thread thread = new Handler(socket);
@@ -40,6 +41,9 @@ public class Server {
             ConsoleHelper.writeMessage("Ошибка!");
         }
     }
+
+
+
 
     /**
      * Новый поток обработчик Handler, в котором будет происходить обмен
@@ -134,10 +138,36 @@ public class Server {
                 if (msg.getType() == (MessageType.TEXT)) {
                     String newMsg = userName + ": " + msg.getData();
                     sendBroadcastMessage(new Message(MessageType.TEXT, newMsg));
+                } else if (msg.getType() == (MessageType.FILE)){
+                    ConsoleHelper.writeMessage("Попытка передать файл");
+                    File file = msg.getFile();
                 } else {
-                    ConsoleHelper.writeMessage("Сообщение не является текстом!");
+                    ConsoleHelper.writeMessage("Сообщение не является текстом или файлом!");
                 }
             }
+        }
+
+        /**
+         * Метод перепишет пришедший файл в папку на сервере
+         * @param msg
+         * @throws IOException
+         */
+        private void copyFilesSymbolWithBuffer(Message msg) throws IOException {
+            FileReader fileReader = new FileReader(msg.getFile());
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            FileWriter fileWriter = new FileWriter(msg.getFile().getName());
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            while (bufferedReader.ready()){
+                bufferedWriter.write((char) bufferedReader.read());
+            }
+
+            bufferedWriter.close();
+            fileWriter.close();
+
+            bufferedReader.close();
+            fileReader.close();
         }
 
     }
